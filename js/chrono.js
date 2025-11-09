@@ -7,7 +7,13 @@ let timeLeft = 15;
 
 // Initialisation du jeu
 function initGame() {
-    shuffledQuestions = shuffleArray(questions).slice(0, 10);
+    currentQuestion = 0;
+    score = 0;
+    shuffledQuestions = shuffleArray([...questions]).slice(0, 10);
+    
+    document.getElementById('quiz').style.display = 'block';
+    document.getElementById('result').style.display = 'none';
+    
     loadQuestion();
 }
 
@@ -112,4 +118,4 @@ function endGame() {
 }
 
 // Démarrage automatique du jeu au chargement de la page
-window.onload = initGame;
+window.addEventListener('DOMContentLoaded', initGame);
