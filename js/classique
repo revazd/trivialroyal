@@ -1,0 +1,82 @@
+// Mode Classique - 10 questions sans limite de temps
+let currentQuestion = 0;
+let score = 0;
+let shuffledQuestions = [];
+
+// Initialisation du jeu
+function initGame() {
+    shuffledQuestions = shuffleArray(questions).slice(0, 10);
+    loadQuestion();
+}
+
+function loadQuestion() {
+    if (currentQuestion >= 10) {
+        endGame();
+        return;
+    }
+
+    const question = shuffledQuestions[currentQuestion];
+    
+    document.getElementById('questionText').textContent = question.question;
+    document.getElementById('score').textContent = `Score: ${score}`;
+    document.getElementById('questionNumber').textContent = `Question ${currentQuestion + 1}/10`;
+    
+    const progress = ((currentQuestion + 1) / 10) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+
+    const answersContainer = document.getElementById('answersContainer');
+    answersContainer.innerHTML = '';
+
+    question.answers.forEach((answer, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-btn';
+        btn.textContent = answer;
+        btn.onclick = () => checkAnswer(index, question.correct);
+        answersContainer.appendChild(btn);
+    });
+}
+
+function checkAnswer(selected, correct) {
+    const buttons = document.querySelectorAll('.answer-btn');
+    buttons.forEach(btn => btn.disabled = true);
+
+    if (selected === correct) {
+        buttons[correct].classList.add('correct');
+        score += 10;
+        setTimeout(() => {
+            currentQuestion++;
+            loadQuestion();
+        }, 1000);
+    } else {
+        buttons[selected].classList.add('incorrect');
+        buttons[correct].classList.add('correct');
+        
+        setTimeout(() => {
+            currentQuestion++;
+            loadQuestion();
+        }, 1500);
+    }
+}
+
+function endGame() {
+    document.getElementById('quiz').style.display = 'none';
+    document.getElementById('result').style.display = 'block';
+
+    document.getElementById('finalScore').textContent = `${score}/100`;
+    
+    let message = '';
+    if (score >= 80) {
+        message = '🌟 Excellent ! Vous êtes un expert !';
+    } else if (score >= 60) {
+        message = '👍 Très bien joué !';
+    } else if (score >= 40) {
+        message = '😊 Pas mal, continuez à vous entraîner !';
+    } else {
+        message = '💪 Ne vous découragez pas, réessayez !';
+    }
+    
+    document.getElementById('resultMessage').textContent = message;
+}
+
+// Démarrage automatique du jeu au chargement de la page
+window.onload = initGame;
